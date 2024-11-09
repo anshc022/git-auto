@@ -63,6 +63,9 @@ def authorized():
     repos_info = github.get(repos_url)
     repos_data = repos_info.json()
 
+    # Store GitHub username in session for later use
+    session['github_username'] = login
+
     # Render profile page
     return render_template('profile.html', name=name, login=login, avatar_url=avatar_url, repos_data=repos_data)
 
