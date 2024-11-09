@@ -3,6 +3,7 @@ import datetime
 from flask import Flask, redirect, url_for, session, render_template, request
 from authlib.integrations.flask_client import OAuth
 import subprocess
+import random
 
 # Set environment variables for GitHub OAuth (Replace with your actual values)
 os.environ['GITHUB_CLIENT_ID'] = 'Ov23liy0PPSPZMZYeHN4'
@@ -75,29 +76,44 @@ def generate_commits():
     username = session.get('github_username')
     repo_name = request.form['repo_name']
     total_days = int(request.form['total_days'])
-    commit_frequency = int(request.form['commit_frequency'])
-    
+    min_commits = int(request.form['min_commits'])
+    max_commits = int(request.form['max_commits'])
+
     # Set GitHub repository link
     repo_link = f"https://github.com/{username}/{repo_name}.git"
+    
+    # Call the generate_commits function
+    result = generate_commits(total_days, min_commits, max_commits, repo_link)
+    
+    return result
 
-    # Generate commits logic
+def generate_commits(total_days, min_commits, max_commits, repo_link):
+    ctr = 2  # Commit counter
     now = datetime.datetime.now()
-    pointer = 0
-    ctr = 1
-    for day in range(total_days, 0, -1):
-        for commit in range(commit_frequency):
-            commit_date = now + datetime.timedelta(days=-pointer)
-            format_date = commit_date.strftime("%Y-%m-%d")
-            
-            # Generate commit
-            commit_message = f"commit {ctr}: {format_date}"
-            os.system(f"git add .")
-            os.system(f"git commit --date=\"{format_date} 12:15:10\" -m \"{commit_message}\"")
-            print(f"commit {ctr}: {format_date}")
-            ctr += 1
-        pointer += 1
+    pointer = 0  # Days back
 
-    # Push commits to GitHub
+    # Initialize repository if not already
+    os.system("git init")
+
+    # Loop through each day
+    for _ in range(total_days):
+        commit_frequency = random.randint(min_commits, max_commits)
+        for _ in range(commit_frequency):
+            commit_date = now - datetime.timedelta(days=pointer)
+            formatted_date = commit_date.strftime("%Y-%m-%d")
+            
+            # Write a line in commit.txt
+            with open("commit.txt", "a") as f:
+                f.write(f"commit ke {ctr}: {formatted_date}\n")
+            
+            # Commit with date
+            os.system("git add .")
+            os.system(f'git commit --date="{formatted_date} 12:15:10" -m "commit ke {ctr}"')
+            ctr += 1
+        
+        pointer += 1  # Move to the next day back
+
+    # Push to GitHub
     os.system(f"git remote add origin {repo_link}")
     os.system("git branch -M main")
     os.system("git push -u origin main -f")
