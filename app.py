@@ -45,6 +45,7 @@ def login():
 def logout():
     # Logout user
     session.pop('github_token', None)
+    session.pop('github_username', None)  # Remove username session
     return redirect(url_for('index'))
 
 @app.route('/login/authorized')
@@ -72,51 +73,52 @@ def authorized():
 
 @app.route('/generate_commits', methods=['POST'])
 def generate_commits():
-    # Get user input from the form
-    username = session.get('github_username')
+    # Get user info from session
+    token = session.get('github_token')
+    if not token:
+        return redirect(url_for('login'))
+
+    # Get the authenticated user's GitHub username from their token
+    github_user = github.get('https://api.github.com/user', token=token)
+    github_user_data = github_user.json()
+    username = github_user_data['login']  # GitHub username (pranshu21413)
+    
+    # Get selected repository name from form input
     repo_name = request.form['repo_name']
     total_days = int(request.form['total_days'])
-    min_commits = int(request.form['min_commits'])
-    max_commits = int(request.form['max_commits'])
+    commit_frequency = int(request.form['commit_frequency'])
 
-    # Set GitHub repository link
+    # Construct the correct repository link
     repo_link = f"https://github.com/{username}/{repo_name}.git"
-    
-    # Call the generate_commits function
-    result = generate_commits(total_days, min_commits, max_commits, repo_link)
-    
-    return result
 
-def generate_commits(total_days, min_commits, max_commits, repo_link):
-    ctr = 2  # Commit counter
-    now = datetime.datetime.now()
-    pointer = 0  # Days back
-
-    # Initialize repository if not already
+    # Initialize repository
     os.system("git init")
 
-    # Loop through each day
-    for _ in range(total_days):
-        commit_frequency = random.randint(min_commits, max_commits)
-        for _ in range(commit_frequency):
-            commit_date = now - datetime.timedelta(days=pointer)
+    # Add the correct remote URL
+    os.system(f"git remote set-url origin {repo_link}")
+
+    # Generate commits logic
+    now = datetime.datetime.now()
+    pointer = 0
+    ctr = 1
+    for day in range(total_days, 0, -1):
+        for commit in range(commit_frequency):
+            commit_date = now + datetime.timedelta(days=-pointer)
             formatted_date = commit_date.strftime("%Y-%m-%d")
             
-            # Write a line in commit.txt
+            # Write to commit.txt
             with open("commit.txt", "a") as f:
-                f.write(f"commit ke {ctr}: {formatted_date}\n")
+                f.write(f"commit {ctr}: {formatted_date}\n")
             
             # Commit with date
             os.system("git add .")
-            os.system(f'git commit --date="{formatted_date} 12:15:10" -m "commit ke {ctr}"')
+            os.system(f'git commit --date="{formatted_date} 12:15:10" -m "commit {ctr}: {formatted_date}"')
             ctr += 1
         
-        pointer += 1  # Move to the next day back
+        pointer += 1
 
-    # Push to GitHub
-    os.system(f"git remote add origin {repo_link}")
-    os.system("git branch -M main")
-    os.system("git push -u origin main -f")
+    # Push commits to the selected GitHub repository
+    os.system(f"git push -u origin main --force")
 
     return "Commits generated and pushed successfully!"
 

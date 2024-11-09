@@ -3,39 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Commit Generator</title>
+    <title>User Profile</title>
 </head>
 <body>
     <h1>Welcome, {{ name }}!</h1>
-    <img src="{{ avatar_url }}" alt="Profile Image" width="100">
-
-    <p>GitHub Username: {{ login }}</p>
-
-    <h2>Select a Repository to Generate Commits</h2>
+    <img src="{{ avatar_url }}" alt="Avatar" width="100">
+    <h2>Your Repositories:</h2>
     <form action="{{ url_for('generate_commits') }}" method="POST">
-        <label for="repo_name">Repository Name:</label>
-        <select name="repo_name" required>
+        <select name="repo_name">
             {% for repo in repos_data %}
                 <option value="{{ repo.name }}">{{ repo.name }}</option>
             {% endfor %}
-        </select>
-        <br><br>
-
+        </select><br>
+        
         <label for="total_days">Total Days:</label>
-        <input type="number" name="total_days" value="19" required>
-        <br><br>
-
-        <label for="min_commits">Minimum Commits per Day:</label>
-        <input type="number" name="min_commits" value="1" required>
-        <br><br>
-
-        <label for="max_commits">Maximum Commits per Day:</label>
-        <input type="number" name="max_commits" value="5" required>
-        <br><br>
-
+        <input type="number" name="total_days" required><br>
+        
+        <label for="commit_frequency">Commits per Day:</label>
+        <input type="number" name="commit_frequency" required><br>
+        
         <button type="submit">Generate Commits</button>
     </form>
-
+    <br>
     <a href="{{ url_for('logout') }}">Logout</a>
 </body>
 </html>
