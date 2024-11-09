@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Commits</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-center">Generate Commits to Your GitHub Repository</h1>
+        
+        <form method="POST" class="mt-6 max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md">
+            <label for="github_username" class="block text-lg font-semibold">GitHub Username:</label>
+            <input type="text" name="github_username" id="github_username" class="w-full p-2 mt-2 mb-4 border rounded" required>
+
+            <label for="repo_name" class="block text-lg font-semibold">Repository Name:</label>
+            <input type="text" name="repo_name" id="repo_name" class="w-full p-2 mt-2 mb-4 border rounded" required>
+
+            <label for="total_days" class="block text-lg font-semibold">Total Days for Commits:</label>
+            <input type="number" name="total_days" id="total_days" class="w-full p-2 mt-2 mb-4 border rounded" required>
+
+            <label for="min_commits" class="block text-lg font-semibold">Min Commits per Day:</label>
+            <input type="number" name="min_commits" id="min_commits" class="w-full p-2 mt-2 mb-4 border rounded" required>
+
+            <label for="max_commits" class="block text-lg font-semibold">Max Commits per Day:</label>
+            <input type="number" name="max_commits" id="max_commits" class="w-full p-2 mt-2 mb-4 border rounded" required>
+
+            <button type="submit" class="w-full py-2 mt-4 bg-blue-600 text-white rounded-md hover:bg-blue-700">Generate Commits</button>
+        </form>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ name }}'s GitHub Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .profile-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 350px;
+        }
+        .profile-container img {
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+        .repo-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .repo-list li {
+            background-color: #f8f8f8;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .repo-list li a {
+            text-decoration: none;
+            color: #0366d6;
+        }
+        .repo-list li a:hover {
+            text-decoration: underline;
+        }
+        .logout-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #d73a49;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .logout-btn:hover {
+            background-color: #cb2431;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <img src="{{ avatar_url }}" alt="Avatar" width="100">
+        <h2>{{ name }}</h2>
+        <p><strong>Username:</strong> {{ login }}</p>
+
+        <h3>Your Repositories</h3>
+        <form action="{{ url_for('generate_commits') }}" method="POST">
+            <label for="repo_name">Repository Name:</label>
+            <select name="repo_name" required>
+                {% for repo in repos_data %}
+                    <option value="{{ repo.name }}">{{ repo.name }}</option>
+                {% endfor %}
+            </select>
+            <br><br>
+
+            <label for="total_days">Total Days:</label>
+            <input type="number" name="total_days" value="19" required>
+            <br><br>
+
+            <label for="commit_frequency">Commits per Day:</label>
+            <input type="number" name="commit_frequency" value="22" required>
+            <br><br>
+
+            <button type="submit">Generate Commits</button>
+        </form>
+
+        <form action="{{ url_for('logout') }}" method="POST">
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+    </div>
+</body>
+</html>
