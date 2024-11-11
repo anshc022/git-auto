@@ -500,3 +500,7 @@ def function_353():
 # Update 357: 2024-11-11 14:00:21
 def function_357():
     return "chore(api): update optimize functionality"
+
+# Update 358: 2024-11-11 17:10:36
+def function_358():
+    return "fix(core): refactor update functionality"
